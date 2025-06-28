@@ -1,0 +1,50 @@
+version: '3'
+services:
+  ## Image runtime service
+  ## This can be used to add volume mounts or pass environment variables
+  ## Todo: make a service which can use the container interactively
+  notebook_rppg:
+#    image: bhargav28/jupyter_signal:pyvhr
+    image: adityabantwal/rppg_pytorch_biosignals
+    container_name: jupyter_notebook_rppg
+#    build:
+#      context: .
+#      dockerfile: docker/Dockerfile
+#      platforms:
+#       - linux/amd64
+    ports:
+      - "8888:8888"
+    volumes:
+      - type: bind
+        source: "./Notebooks"
+        target: "/home/Notebooks"
+      - type: bind
+        source: "./rPPG-Data"
+        target: "/home/rPPG-Toolbox/data"
+        # volume:
+        #   nocopy: true
+        
+      #- "${DATA_MOUNT}:/home/Notebooks"
+    tty: true
+    environment:
+      DATA_MOUNT: "${DATA_MOUNT:-./Notebooks}"
+
+  openface:
+    image: bhargav28/openface
+    container_name: openface
+ #   build:
+  #    context: .
+   #   dockerfile: openface/Dockerfile
+    #image: openface:latest
+    tty: true
+    volumes:
+      - type: bind
+        source: "./Notebooks"
+        target: /home/Notebooks
+      #- "${DATA_MOUNT}:/home/Notebooks"
+    environment:
+      DATA_MOUNT: "${DATA_MOUNT:-./Notebooks}"
+    command: ["bash"]
+
+
+...
