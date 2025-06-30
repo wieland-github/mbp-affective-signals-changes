@@ -4,7 +4,7 @@ WiSe 2024/25 Bielefeld University
 This is a repository containing jupyter-notebooks that explore different modalities that are used in multimodal analysis of human behaviour. More information about the course can be found [here](https://ekvv.uni-bielefeld.de/kvv_publ/publ/vd?id=395414864)
 
 ## Installation Instructions
-In this course, you will be analyzing your own videos. To get the environment with all the necessary packages here we are going to use docker. The Docker container will be used as a development environment where you will run all the jupyter-notebooks.  
+In this course, you will be analyzing your own videos. To get the environment with all the necessary packages here we are going to use docker. The Docker container will be used as a development environment where you will run all the jupyter-notebooks.
 
 ### Docker compose
 The only dependency that you are required to install is Docker and Docker-compose. Please refer to the original instructions provided by docker.
@@ -39,36 +39,41 @@ As mentioned earlier, we will be using docker to run the notebooks.
     - Copy the video that you will analyze into the  \Notebooks folder that is within the cloned directory. (cp video_name.mp4 \<REPO NAME>\Notebooks\)
 	- make sure you are in the cloned directory named \<REPO NAME\>.
 	- Then run the command below to start the containers.
-	
+
 	```bash
-	docker-compose up -d 
+	docker-compose up -d
 	```
-    
-	- You should receive a message indicating that the containers were started. 
-	
+
+	- You should receive a message indicating that the containers were started.
+
 	```console
 	Creating jupyter_notebook ... done
 	Creating openface         ... done
 	```
-    
-  	* You can use ```docker ps``` to other details regarding the running containers. 
+
+  	* You can use ```docker ps``` to other details regarding the running containers.
 2. Extracting features using openface
   	- To run openface on the video that you copied, use the command below.
 	```bash
 	docker exec -it openface FeatureExtraction -f /home/Notebooks/video_file_name -out_dir /home/Notebooks/processed
 	```
   	- Note: The video_file_name is just the name of your file and not the whole path, if the name of the file placed in Notebooks folder above was ba_zoom.mp4 you would run the below command :
-  
+
 	```bash
 	docker exec -it openface FeatureExtraction -f /home/Notebooks/ba_zoom.mp4 -out_dir /home/Notebooks/processed
 	```
-    
-  	- Check the folder \<REPO NAME\>/Notebooks/processed on your local system if you have the processed video with the csv file 
+
+  	- Check the folder \<REPO NAME\>/Notebooks/processed on your local system if you have the processed video with the csv file
 3. Running the jupyter-notebook:
 	- To start the jupyter-notebook instance, use the command below:
 	``` bash
-	docker exec -it jupyter_notebook jupyter-notebook --no-browser --ip="*" --allow-root 
+	docker exec -it --user root jupyter_notebook_rppg bash -c "apt-get update && apt-get install -y libmagic1 file && source /root/.bashrc && cd /home/ && jupyter-notebook --no-browser --ip='*' --allow-root"
 	```
+	or
+	``` bash
+	docker exec -it -w /home/ jupyter_notebook_rppg bash -c "source /root/.bashrc && jupyter-notebook --no-browser --ip='*' --allow-root"
+	```
+
 	- Example output to the above command.
     	```console
 		To access the notebook, open this file in a browser:
@@ -85,27 +90,26 @@ As mentioned earlier, we will be using docker to run the notebooks.
 	docker-compose down
 	```
   	- You should get a message in your console indicating the container has stopped
-	
+
 	```console
 	Stopping openface         ... done
 	Stopping jupyter_notebook ... done
 	Removing openface         ... done
 	Removing jupyter_notebook ... done
-	Removing network affectivesignals_default  
+	Removing network affectivesignals_default
 	```
 Additional Info-
 
 To run the affectiveSignalsHeart.ipynb, run the command below after you start the container (after running ```docker-compose up -d```):
 ``` bash
-docker exec -it -w /home/ jupyter_notebook bash -c "source ~/.bashrc; jupyter-notebook --no-browser --ip="*" --allow-root" 
+docker exec -it -w /home/ jupyter_notebook bash -c "source ~/.bashrc; jupyter-notebook --no-browser --ip="*" --allow-root"
 ```
 => on Mac you have to replace the quotes of --ip="*" to single quotes!
 
 ## FAQ
 * ```docker-desktop : Depends on: docker-ce-cli but is not installable; E: Problems can't be fixed, you have held back broken packages```
-	-> make sure the [setup the docker repository] (https://docs.docker.com/engine/install/ubuntu/#set-up-the-repository) first 
+	-> make sure the [setup the docker repository] (https://docs.docker.com/engine/install/ubuntu/#set-up-the-repository) first
 * ```ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?```
 	-> run command with sudo, or manage docker rights
 * ```PermissionError: [Errno 13] Permission denied```
 	-> run command with sudo, or manage docker rights
-
