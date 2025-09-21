@@ -1,0 +1,14 @@
+FROM adityabantwal/rppg_pytorch_biosignals
+SHELL ["/bin/bash","-o","pipefail","-c"]
+
+# Gibt es die "signal"-Env?
+RUN conda run -n signal python -V >/dev/null 2>&1 || echo no-signal-env >/tmp/no_signal_env
+
+# Install in der später genutzten Env
+RUN if [ -f /tmp/no_signal_env ]; then \
+      python -m pip install --no-cache-dir -U pip && \
+      python -m pip install --no-cache-dir plotly ipywidgets kaleido; \
+    else \
+      conda run -n signal python -m pip install --no-cache-dir -U pip && \
+      conda run -n signal python -m pip install --no-cache-dir plotly ipywidgets kaleido; \
+    fi

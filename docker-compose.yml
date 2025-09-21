@@ -5,11 +5,12 @@ services:
   ## Todo: make a service which can use the container interactively
   notebook_rppg:
 #    image: bhargav28/jupyter_signal:pyvhr
-    image: adityabantwal/rppg_pytorch_biosignals
+#    image: adityabantwal/rppg_pytorch_biosignals
+    image: rppg_pytorch_biosignals:with-plotly
     container_name: jupyter_notebook_rppg
-#    build:
-#      context: .
-#      dockerfile: docker/Dockerfile
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.plotly
 #      platforms:
 #       - linux/amd64
     ports:
