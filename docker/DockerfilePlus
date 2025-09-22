@@ -4,11 +4,15 @@ SHELL ["/bin/bash","-o","pipefail","-c"]
 # Gibt es die "signal"-Env?
 RUN conda run -n signal python -V >/dev/null 2>&1 || echo no-signal-env >/tmp/no_signal_env
 
-# Install in der später genutzten Env
+# Install in der später genutzten Env (CPU: pyVHR-cpu<2.0, kein CuPy) + SciPy-MAD-Shim
 RUN if [ -f /tmp/no_signal_env ]; then \
       python -m pip install --no-cache-dir -U pip && \
-      python -m pip install --no-cache-dir plotly ipywidgets kaleido; \
+      python -m pip install --no-cache-dir \
+        plotly biosppy ipywidgets kaleido lmfit mediapipe numba "scipy==1.10.1" "numpy<2.0" 'pyVHR-cpu<2.0' && \
+      python -c "import sysconfig,os; p=sysconfig.get_paths()['purelib']; fn=os.path.join(p,'sitecustomize.py'); open(fn,'w').write('import scipy.stats as _s\\nif not hasattr(_s, \\\"median_absolute_deviation\\\") and hasattr(_s, \\\"median_abs_deviation\\\"):\\n    _s.median_absolute_deviation = _s.median_abs_deviation\\n'); print('SciPy MAD shim ->', fn)"; \
     else \
       conda run -n signal python -m pip install --no-cache-dir -U pip && \
-      conda run -n signal python -m pip install --no-cache-dir plotly ipywidgets kaleido; \
+      conda run -n signal python -m pip install --no-cache-dir \
+        plotly biosppy ipywidgets kaleido lmfit mediapipe numba "scipy==1.10.1" "numpy<2.0" 'pyVHR-cpu<2.0' && \
+      conda run -n signal python -c "import sysconfig,os; p=sysconfig.get_paths()['purelib']; fn=os.path.join(p,'sitecustomize.py'); open(fn,'w').write('import scipy.stats as _s\\nif not hasattr(_s, \\\"median_absolute_deviation\\\") and hasattr(_s, \\\"median_abs_deviation\\\"):\\n    _s.median_absolute_deviation = _s.median_abs_deviation\\n'); print('SciPy MAD shim ->', fn)"; \
     fi
