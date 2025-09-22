@@ -6,12 +6,13 @@ services:
   notebook_rppg:
 #    image: bhargav28/jupyter_signal:pyvhr
 #    image: adityabantwal/rppg_pytorch_biosignals
-    image: rppg_pytorch_biosignals:with-plotly
+#    image: rppg_pytorch_biosignals:with-plotly
+    image: 78485/rppg_custom:latest
     container_name: jupyter_notebook_rppg
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.plotly
-#      platforms:
+#    build:
+#     context: .
+#     dockerfile: docker/Dockerfile.plotly
+#     platforms:
 #       - linux/amd64
     ports:
       - "8888:8888"
